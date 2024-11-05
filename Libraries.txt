@@ -1,1 +1,3 @@
-https://github.com/labsonar/template_library.git
+git@github.com:labsonar/utils.git
+git@github.com:labsonar/signal_processing.git
+git@github.com:labsonar/acoustic_synthesis.git
