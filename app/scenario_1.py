@@ -16,7 +16,7 @@ import lps_synthesis.scenario.sonar as lps_sonar
 import lps_synthesis.environment.environment as lps_env
 import lps_synthesis.propagation.channel as lps_channel
 
-lps_channel.TEMP_DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/result/propagation"
+lps_channel.DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/result/propagation"
 
 
 def main() -> None:

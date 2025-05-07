@@ -5,7 +5,7 @@ import lps_synthesis.propagation.channel_description as lps_desc
 import lps_synthesis.propagation.channel as lps_channel
 
 
-lps_channel.TEMP_DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/result/propagation"
+lps_channel.DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/result/propagation"
 
 desc = lps_desc.Description()
 desc.add(lps_qty.Distance.m(0), lps_qty.Speed.m_s(1500))
