@@ -12,26 +12,32 @@ import scipy.signal as sci_sig
 import lps_utils.quantities as lps_qty
 import lps_synthesis.scenario.dynamic as lps_dynamic
 import lps_synthesis.scenario.scenario as lps_scenario
+import lps_synthesis.scenario.noise_source as lps_noise
 import lps_synthesis.scenario.sonar as lps_sonar
 import lps_synthesis.environment.environment as lps_env
 import lps_synthesis.propagation.channel as lps_channel
 
-lps_channel.DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/result/propagation"
+lps_channel.DEFAULT_DIR = "./lps_libraries/acoustic_synthesis/channel"
 
 
 def main() -> None:
+    """App main's function. """
 
-    output_dir = "./plot/scenario_0"
+    output_dir = "./result/scenario_0"
     os.makedirs(output_dir, exist_ok=True)
 
     environment = lps_env.Environment(rain_value=lps_env.Rain.LIGHT,
                                     sea_value=lps_env.Sea.STATE_2,
                                     shipping_value=lps_env.Shipping.LEVEL_5)
+    # channel = lps_channel.PredefinedChannel.CYLINDRICAL.get_channel()
     channel = lps_channel.PredefinedChannel.DEEPSHIP.get_channel()
     sample_frequency = lps_qty.Frequency.khz(16)
 
-    scenario = lps_scenario.Scenario(channel = channel,
-                                    environment = environment)
+    scenario = lps_scenario.Scenario(
+        step_interval=lps_qty.Time.s(1),
+        channel = channel,
+        environment = environment
+    )
 
     sonar = lps_sonar.Sonar.hidrofone(
             sensitivity=lps_qty.Sensitivity.db_v_p_upa(-165),
@@ -43,15 +49,14 @@ def main() -> None:
 
     scenario.add_sonar("main", sonar)
 
-
-    ship1 = lps_scenario.Ship(
+    ship1 = lps_noise.Ship(
                     ship_id="Navio 1",
-                    propulsion=lps_scenario.CavitationNoise(
-                        ship_type=lps_scenario.ShipType.CONTAINERSHIP,
+                    propulsion=lps_noise.CavitationNoise(
+                        ship_type=lps_noise.ShipType.CONTAINERSHIP,
                         n_blades=4,
                         n_shafts=1,
+                        max_speed=lps_qty.Speed.kt(15),
                     ),
-                    max_speed=lps_qty.Speed.kt(15),
                     draft=lps_qty.Distance.m(2),
                     initial_state=lps_dynamic.State(
                             position = lps_dynamic.Displacement(
@@ -65,28 +70,35 @@ def main() -> None:
                                     lps_qty.Acceleration.m_s2(0))
                     )
             )
-    ship1.add_source(lps_scenario.Sin(frequency=lps_qty.Frequency.khz(4),
-                                      amp_db_p_upa=80))
-    ship1.add_source(lps_scenario.Sin(frequency=lps_qty.Frequency.khz(4.05),
-                                      amp_db_p_upa=80,
-                                      rel_position=lps_dynamic.Displacement(lps_qty.Distance.m(50),
-                                                                            lps_qty.Distance.m(0))))
+    ship1.add_source(
+        lps_noise.NarrowBandNoise(
+            frequency=lps_qty.Frequency.khz(4),
+            amp_db_p_upa=80)
+        )
+    ship1.add_source(
+        lps_noise.NarrowBandNoise(
+            frequency=lps_qty.Frequency.khz(4.05),
+            amp_db_p_upa=80,
+            rel_position=lps_dynamic.Displacement(lps_qty.Distance.m(50),
+                                                  lps_qty.Distance.m(0))
+            )
+        )
 
     scenario.add_noise_container(ship1)
 
-    scenario.simulate(lps_qty.Time.s(1), 90)
+    scenario.simulate(90)
 
     ship1[-1].acceleration = lps_dynamic.Acceleration(
                                 lps_qty.Acceleration.kt_h(10*60),
                                 lps_qty.Acceleration.kt_h(-10*60))
 
-    scenario.simulate(lps_qty.Time.s(1), 30)
+    scenario.simulate(30)
 
     ship1[-1].acceleration = lps_dynamic.Acceleration(
                                 lps_qty.Acceleration.m_s2(0),
                                 lps_qty.Acceleration.m_s2(0))
 
-    scenario.simulate(lps_qty.Time.s(1), 60)
+    scenario.simulate(60)
 
     scenario.geographic_plot(os.path.join(output_dir,"geographic.png"))
     scenario.geographic_plot(os.path.join(output_dir,"geographic.tex"))

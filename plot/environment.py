@@ -11,8 +11,9 @@ import lps_synthesis.environment.environment as lps
 
 
 def main() -> None:
+    """App main's function. """
 
-    output_dir = "./plot"
+    output_dir = "./result/env"
     os.makedirs(output_dir, exist_ok=True)
 
     plt.figure(figsize=(10, 6))
@@ -40,7 +41,8 @@ def main() -> None:
         if shipping == lps.Shipping.NONE:
             continue
         f, p = shipping.get_psd()
-        plt.plot(f, p, label=f"{shipping}".capitalize(), color=shipping_colors[idx-1], linestyle=line_styles[3])
+        plt.plot(f, p, label=f"{shipping}".capitalize(),
+                 color=shipping_colors[idx-1], linestyle=line_styles[3])
 
     plt.xlabel('Frequency (Hz)')
     plt.ylabel("Power Spectral Density (dB ref 1 µPa / √Hz)")
