@@ -39,7 +39,7 @@ def main() -> None:
         environment = environment
     )
 
-    sonar = lps_sonar.Sonar.hidrofone(
+    sonar = lps_sonar.Sonar.hydrophone(
             sensitivity=lps_qty.Sensitivity.db_v_p_upa(-165),
             initial_state=lps_dynamic.State(
                     position = lps_dynamic.Displacement(
