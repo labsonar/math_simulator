@@ -6,7 +6,10 @@ import lps_synthesis.propagation.channel as lps_channel
 import lps_synthesis.propagation.channel_description as lps_desc
 import lps_synthesis.propagation.layers as lps_layer
 
-def get_channel(depth: lps_qty.Distance, seabed: lps_layer.SeabedType) -> lps_channel.Channel:
+def get_channel(depth: lps_qty.Distance,
+                seabed: lps_layer.SeabedType,
+                n_points: int = 400,
+                seed = None) -> lps_channel.Channel:
     desc = lps_desc.Description()
 
     desc.add(lps_qty.Distance.m(0), lps_qty.Speed.m_s(1500))
@@ -14,13 +17,13 @@ def get_channel(depth: lps_qty.Distance, seabed: lps_layer.SeabedType) -> lps_ch
     if seabed is None:
         desc.add(depth, lps_layer.AcousticalLayer())
     else:
-        desc.add(depth, lps_layer.Seabed(seabed))
+        desc.add(depth, lps_layer.Seabed(seabed, seed=seed))
 
     return lps_channel.Channel(description = desc,
                     sensor_depth = depth - lps_qty.Distance.m(5),
                     source_depths = [lps_qty.Distance.m(d) for d in np.arange(3, 21, 3)],
                     max_distance = lps_qty.Distance.m(200),
-                    max_distance_points = 41,
+                    max_distance_points = (n_points + 1),
                     sample_frequency = lps_qty.Frequency.khz(16))
 
 
