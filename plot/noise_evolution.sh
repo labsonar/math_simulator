@@ -20,7 +20,10 @@
 # python plot/noise_evolution.py --run_channel_test --with-environment
 
 # python plot/noise_evolution.py --both-ship-signals --with-environment --vary-depth
-python plot/noise_evolution.py --both-ship-signals --with-environment --vary-seabed
+# python plot/noise_evolution.py --both-ship-signals --with-environment --vary-seabed
+
+# python plot/noise_evolution.py --run_ss_test --with-environment
+python plot/noise_evolution.py --run_depth_test --with-environment
 
 # python lps_libraries/signal_processing/apps/demon.py ./result/noise_evolution/blade_test/bulker --n_fft 1024 --max_freq 40 --merge
 # python lps_libraries/signal_processing/apps/demon.py ./result/noise_evolution/blade_test/bulker --n_fft 1024 --max_freq 40 --merge --export_tex
@@ -35,8 +38,11 @@ python plot/noise_evolution.py --both-ship-signals --with-environment --vary-sea
 # python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/channel_resolution --integration_time 1 --integration_overlap 0.5
 # python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/channel_resolution --integration_time 1 --integration_overlap 0.5 --export_tex
 
-python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/seabed_test --integration_time 1 --integration_overlap 0.5
-python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/seabed_test --integration_time 1 --integration_overlap 0.5 --export_tex
+# python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/seabed_test --integration_time 1 --integration_overlap 0.5
+# python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/seabed_test --integration_time 1 --integration_overlap 0.5 --export_tex
 
 # python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/complete --integration_time 1 --integration_overlap 0.5
 # python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/complete --integration_time 1 --integration_overlap 0.5 --export_tex
+
+# python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/ss_test --integration_time 1 --integration_overlap 0.5
+# python lps_libraries/signal_processing/apps/spectral_analysis.py ./result/noise_evolution/ss_test --integration_time 1 --integration_overlap 0.5 --export_tex

@@ -125,6 +125,10 @@ def _parse_args():
                         help="Export noise varying number of blades")
     parser.add_argument("--run_channel_test", action="store_true",
                         help="Export with variable channel estimation resolution")
+    parser.add_argument("--run_ss_test", action="store_true",
+                        help="Run export sound speed test")
+    parser.add_argument("--run_depth_test", action="store_true",
+                        help="Export with multiple source depths")
     parser.add_argument("--vary-depth", action="store_true",
                         help="Export with multiple depths")
     parser.add_argument("--vary-seabed", action="store_true",
@@ -202,6 +206,7 @@ def main():
         ship.ref_state.position.y = lps_qty.Distance.m(y)
 
     sensor.ref_state.velocity.x = lps_qty.Speed.kt(0)
+
     sensor.move(lps_qty.Time.s(args.step_duration), args.n_steps)
     for ship in ships:
         ship.move(lps_qty.Time.s(args.step_duration), args.n_steps)
@@ -292,6 +297,21 @@ def main():
                                 fs,
                                 os.path.join(out_dir, _get_complete_name(args, f"_{n_points}pts")))
 
+    if args.run_ss_test:
+        for sweep in [-50, 50]:
+            channel = channel_allocator.get_channel(
+                    lps_qty.Distance.m(depths[0]),
+                    seabeds[0],
+                    seed=seed_base,
+                    speed_sweep = lps_qty.Speed.m_s(sweep)
+                )
+            noise = sensor.get_data(lps_noise.NoiseCompiler(ships, fs), channel, env)
+            out_dir = os.path.join(args.output_dir, "ss_test")
+            os.makedirs(out_dir, exist_ok=True)
+            lps_signal.save_wav(noise,
+                                fs,
+                                os.path.join(out_dir, _get_complete_name(args, f"_{sweep}")))
+
     if args.export_complete:
         channel = channel_allocator.get_channel(
                 lps_qty.Distance.m(depths[0]),
@@ -304,6 +324,29 @@ def main():
         os.makedirs(out_dir, exist_ok=True)
         lps_signal.save_wav(noise, fs, os.path.join(out_dir, _get_complete_name(args)))
 
+    if args.run_depth_test:
+
+        for depth in range(3,21,3):
+
+            ships[-1].draft = lps_qty.Distance.m(depth)
+
+            # sensor.reset()
+            # sensor.move(lps_qty.Time.s(args.step_duration), args.n_steps)
+            # for ship in ships:
+            #     ship.reset()
+            #     ship.move(lps_qty.Time.s(args.step_duration), args.n_steps)
+
+            channel = channel_allocator.get_channel(
+                    lps_qty.Distance.m(depths[0]),
+                    seabeds[0],
+                    seed=seed_base,
+                )
+            noise = sensor.get_data(lps_noise.NoiseCompiler(ships, fs), channel, env)
+            out_dir = os.path.join(args.output_dir, "source_depth_test")
+            os.makedirs(out_dir, exist_ok=True)
+            lps_signal.save_wav(noise,
+                                fs,
+                                os.path.join(out_dir, f"at_{depth}m.wav"))
 
 
 if __name__ == "__main__":
