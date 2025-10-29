@@ -7,3 +7,6 @@
 [submodule "lps_libraries/acoustic_synthesis"]
 	path = lps_libraries/acoustic_synthesis
 	url = git@github.com:labsonar/acoustic_synthesis.git
+[submodule "lps_libraries/ml"]
+	path = lps_libraries/ml
+	url = git@github.com:labsonar/ml.git
